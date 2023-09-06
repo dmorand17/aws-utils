@@ -13,7 +13,7 @@ s3 = boto3.resource("s3")
     "--bucket",
     "-b",
     multiple=True,
-    help="The bucket(s) you want to delete",
+    help="The bucket(s) you want to empty",
 )
 @click.option(
     "--delete",
@@ -23,7 +23,9 @@ s3 = boto3.resource("s3")
     help="Delete the bucket(s)",
 )
 def empty_bucket(bucket, delete):
-    """Delete all object versions in a bucket"""
+    """
+    Delete all object versions in a bucket.  Optionally delete bucket
+    """
     for idx, bucket_name in enumerate(bucket, 1):
         print(f"[-] Emptying bucket '{bucket_name}' ...")
         bucket = s3.Bucket(bucket_name)
