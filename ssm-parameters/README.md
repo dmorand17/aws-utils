@@ -38,7 +38,7 @@ Options:
 Get a list of Ubuntu 22.04 AMIs for x86 arch
 
 ```bash
-python3 ssm-parameters/main.py -v -a -p /aws/service/canonical/ubuntu/server/22.04/stable/current/amd64
+python3 ssm-parameters/main.py --recursive --all_regions -p /aws/service/canonical/ubuntu/server/22.04/stable/current/amd64
 ```
 
 _output_

@@ -144,12 +144,12 @@ def get_parameters(path, region=os.environ.get("AWS_REGION"), **kwargs):
     return parameters
 
 
-def process_region_parameters(regions, path, output_format):
+def process_region_parameters(regions, path, recursive, output_format):
     logger.debug(f"Regions: {regions}")
     all_region_param_list = AllRegionParameters()
     for region in regions:
-        # print(f"[✓] Checking {region}")
-        parameters = get_parameters(path, region=region, Recursive=True)
+        logger.info(f"Getting parameters for region: {region}")
+        parameters = get_parameters(path, region=region, Recursive=recursive)
         logger.debug(json.dumps(parameters, indent=4, sort_keys=True))
         region_parameters = RegionParameters(region, parameters)
 
@@ -209,8 +209,9 @@ def generate_region_parameter_list():
     required=True,
     help="Parameter path to query in SSM. e.g. /aws/service/canonical/ubuntu",
 )
+@click.option("--recursive", default=False, is_flag=True, help="Query recursively")
 @click.option("-v", "--verbose", is_flag=True, help="Print debug messages")
-def cli(region, all_regions, output_format, path, verbose):
+def cli(region, all_regions, output_format, path, recursive, verbose):
     # Set logging
     if verbose:
         logger.setLevel(logging.DEBUG)
@@ -220,7 +221,7 @@ def cli(region, all_regions, output_format, path, verbose):
         sys.exit(1)
 
     regions = get_regions() if all_regions else [region]
-    process_region_parameters(regions, path, output_format)
+    process_region_parameters(regions, path, recursive, output_format)
 
 
 if __name__ == "__main__":
