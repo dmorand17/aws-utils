@@ -4,17 +4,12 @@ Simple utility to retrieve parameters from the SSM parameter store by a single r
 
 ## Getting Started
 
-1/ Create a virtual environment
+Add `ssm-parameters.sh` to **PATH**
+
+example of adding to ~/.local/bin which is typically on **PATH**:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-2/ Install requirements
-
-```bash
-pip install -r requirements.txt
+ln -s /path/to/checkout/ssm-parameters.sh ~/.local/bin/ssm-parameters
 ```
 
 ## Usage
@@ -324,4 +319,19 @@ _output_
 ├────────────────┼────────────────────────────────────────────────────────────────────────────────────┼───────────────┼───────────────────────┤
 │ us-west-2      │ /aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id │ aws:ec2:image │ ami-0f1a3eb997d0e161a │
 ╘════════════════╧════════════════════════════════════════════════════════════════════════════════════╧═══════════════╧═══════════════════════╛
+```
+
+## Development
+
+1/ Create a virtual environment
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+2/ Install requirements
+
+```bash
+pip install -r requirements.txt
 ```

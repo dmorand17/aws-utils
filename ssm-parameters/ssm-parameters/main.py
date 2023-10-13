@@ -184,10 +184,8 @@ def generate_region_parameter_list():
     pass
 
 
-# @click.command(no_args_is_help=True)
-@click.command()
+@click.command(no_args_is_help=True)
 @click.option(
-    "-r",
     "--region",
     default=lambda: os.environ.get("AWS_REGION", ""),
     show_default="AWS_REGION",
@@ -195,11 +193,11 @@ def generate_region_parameter_list():
 )
 @click.option("-a", "--all-regions", is_flag=True, help="Query all regions")
 @click.option(
-    "-f",
-    "--format",
+    "-o",
+    "--output",
     "output_format",
     type=click.Choice(["table", "json"]),
-    default="json",
+    default="table",
     show_default=True,
     help="Output format",
 )
@@ -209,7 +207,9 @@ def generate_region_parameter_list():
     required=True,
     help="Parameter path to query in SSM. e.g. /aws/service/canonical/ubuntu",
 )
-@click.option("--recursive", default=False, is_flag=True, help="Query recursively")
+@click.option(
+    "-r", "--recursive", default=False, is_flag=True, help="Query recursively"
+)
 @click.option("-v", "--verbose", is_flag=True, help="Print debug messages")
 def cli(region, all_regions, output_format, path, recursive, verbose):
     # Set logging

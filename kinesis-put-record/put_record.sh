@@ -12,12 +12,8 @@ if [ -z "$stream_name" ] || [ -z "$data" ]; then
     exit 1
 fi
 
-if [ -f "$data" ]; then
-    data="$(cat "$data")"
-fi
-
 aws kinesis put-record \
 --stream-name "$stream_name" \
---data "$data" \
+--data file://"$data"  \
 --partition-key "$partition_key" \
 --cli-binary-format raw-in-base64-out

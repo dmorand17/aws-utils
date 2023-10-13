@@ -59,11 +59,11 @@ python put_records.py [--stream-name STREAM_NAME] [--partition-key PARTITION_KEY
 Put a JSON record into a stream:
 
 ```bash
-python put_records.py "{'id': 123, 'name': 'John Doe'}" --stream-name my-kinesis-stream --partition-key user_123
+KINESIS_STREAM_NAME=xyz python put_records.py "{'id': 123, 'name': 'John Doe'}" --stream-name my-kinesis-stream --partition-key user_123
 ```
 
 Put a JSON record from a file into a stream:
 
 ```bash
-python put_records.py ./record.json --stream-name my-kinesis-stream --partition-key user_123
+KINESIS_STREAM_NAME=xyz python put_records.py ./record.json --stream-name my-kinesis-stream --partition-key user_123
 ```

@@ -19,7 +19,7 @@ fi
 
 source "./.venv/bin/activate"
 
-python3 empty-bucket.py "$@"
+python3 s3-util/main.py "$@"
 
 deactivate
 popd > /dev/null
