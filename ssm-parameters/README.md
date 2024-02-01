@@ -14,8 +14,8 @@ ln -s /path/to/checkout/ssm-parameters.sh ~/.local/bin/ssm-parameters
 
 ## Usage
 
-```
-❯ python3 ssm-parameters/main.py --help
+```bash
+❯ ssm-parameters
 Usage: main.py [OPTIONS]
 
 Options:
@@ -119,156 +119,6 @@ _output_
   "ap-southeast-4": {
     "region_name": "ap-southeast-4",
     "Parameters": []
-  },
-  "ca-central-1": {
-    "region_name": "ca-central-1",
-    "Parameters": [
-      {
-        "Name": "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id",
-        "Value": "ami-0d4b8b87818b26421",
-        "DataType": "aws:ec2:image"
-      }
-    ]
-  },
-  "cn-north-1": {
-    "region_name": "cn-north-1",
-    "Parameters": []
-  },
-  "cn-northwest-1": {
-    "region_name": "cn-northwest-1",
-    "Parameters": []
-  },
-  "eu-central-1": {
-    "region_name": "eu-central-1",
-    "Parameters": [
-      {
-        "Name": "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id",
-        "Value": "ami-0071fbe485985432e",
-        "DataType": "aws:ec2:image"
-      }
-    ]
-  },
-  "eu-central-2": {
-    "region_name": "eu-central-2",
-    "Parameters": []
-  },
-  "eu-north-1": {
-    "region_name": "eu-north-1",
-    "Parameters": [
-      {
-        "Name": "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id",
-        "Value": "ami-0d534fbf90e256d14",
-        "DataType": "aws:ec2:image"
-      }
-    ]
-  },
-  "eu-south-1": {
-    "region_name": "eu-south-1",
-    "Parameters": []
-  },
-  "eu-south-2": {
-    "region_name": "eu-south-2",
-    "Parameters": []
-  },
-  "eu-west-1": {
-    "region_name": "eu-west-1",
-    "Parameters": [
-      {
-        "Name": "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id",
-        "Value": "ami-01b1f2cdbfcb3644e",
-        "DataType": "aws:ec2:image"
-      }
-    ]
-  },
-  "eu-west-2": {
-    "region_name": "eu-west-2",
-    "Parameters": [
-      {
-        "Name": "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id",
-        "Value": "ami-0103fdca60001bd3c",
-        "DataType": "aws:ec2:image"
-      }
-    ]
-  },
-  "eu-west-3": {
-    "region_name": "eu-west-3",
-    "Parameters": [
-      {
-        "Name": "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id",
-        "Value": "ami-0f2c91ec8df4bde48",
-        "DataType": "aws:ec2:image"
-      }
-    ]
-  },
-  "il-central-1": {
-    "region_name": "il-central-1",
-    "Parameters": []
-  },
-  "me-central-1": {
-    "region_name": "me-central-1",
-    "Parameters": []
-  },
-  "me-south-1": {
-    "region_name": "me-south-1",
-    "Parameters": []
-  },
-  "sa-east-1": {
-    "region_name": "sa-east-1",
-    "Parameters": [
-      {
-        "Name": "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id",
-        "Value": "ami-06142e9168d7fe5a9",
-        "DataType": "aws:ec2:image"
-      }
-    ]
-  },
-  "us-east-1": {
-    "region_name": "us-east-1",
-    "Parameters": [
-      {
-        "Name": "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id",
-        "Value": "ami-0408adfcef670a71e",
-        "DataType": "aws:ec2:image"
-      }
-    ]
-  },
-  "us-east-2": {
-    "region_name": "us-east-2",
-    "Parameters": [
-      {
-        "Name": "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id",
-        "Value": "ami-004dae62019936191",
-        "DataType": "aws:ec2:image"
-      }
-    ]
-  },
-  "us-gov-east-1": {
-    "region_name": "us-gov-east-1",
-    "Parameters": []
-  },
-  "us-gov-west-1": {
-    "region_name": "us-gov-west-1",
-    "Parameters": []
-  },
-  "us-west-1": {
-    "region_name": "us-west-1",
-    "Parameters": [
-      {
-        "Name": "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id",
-        "Value": "ami-035663315c4daae24",
-        "DataType": "aws:ec2:image"
-      }
-    ]
-  },
-  "us-west-2": {
-    "region_name": "us-west-2",
-    "Parameters": [
-      {
-        "Name": "/aws/service/canonical/ubuntu/server/22.04/stable/current/amd64/hvm/ebs-gp2/ami-id",
-        "Value": "ami-0f1a3eb997d0e161a",
-        "DataType": "aws:ec2:image"
-      }
-    ]
   }
 }
 ```
@@ -334,4 +184,14 @@ source .venv/bin/activate
 
 ```bash
 pip install -r requirements.txt
+```
+
+## Manual testing
+
+To test that the SSM path is correct, you can test against the AWS CLI (examples below).
+
+```bash
+# Get Amazon Linux 2 AMIs for ue1
+aws ssm get-parameters --names /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2 --region us-east-1
+aws ssm get-parameters-by-path --path "/aws/service/ami-amazon-linux-latest" --region us-east-1
 ```

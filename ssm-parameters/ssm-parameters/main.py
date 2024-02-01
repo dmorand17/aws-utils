@@ -120,60 +120,83 @@ def get_parameters(path, region=os.environ.get("AWS_REGION"), **kwargs):
     :param kwargs: additional kwargs to pass to the get_parameters_by_path function
 
     """
+
+    # Check if string ends with a '.'
+    # if it does, then we need to add a '/' to the end of the string
+    # if not, then we don't need to do anything
+    # if path.endswith('/'):
+
     parameters = []
-    ssm_client = boto3.client("ssm", region_name=region)
-    try:
-        paginator = ssm_client.get_paginator("get_parameters_by_path")
-        page_iterator = paginator.paginate(Path=path, **kwargs)
 
-        for idx, page in enumerate(page_iterator):
-            logger.debug(f"Processing page '{str(idx)}'")
+    if path.endswith("/"):
+        logger.debug(f"Getting parameter by path: {path}")
+        ssm_client = boto3.client("ssm", region_name=region)
+        try:
+            paginator = ssm_client.get_paginator("get_parameters_by_path")
+            page_iterator = paginator.paginate(Path=path, **kwargs)
 
-            params = [
+            for idx, page in enumerate(page_iterator):
+                logger.debug(f"Processing page '{str(idx)}'")
+
+                params = [
+                    {
+                        "Name": parameter["Name"],
+                        "Value": parameter["Value"],
+                        "DataType": parameter["DataType"],
+                    }
+                    for parameter in page["Parameters"]
+                ]
+                parameters.extend(params)
+        except Exception as e:
+            logger.error(f"[{region}] Error getting parameters from path: {path}")
+            logger.error(e)
+
+    else:
+        logger.debug(f"Getting parameter by name: {path}")
+        ssm_client = boto3.client("ssm", region_name=region)
+        try:
+            response = ssm_client.get_parameter(Name=path, WithDecryption=True)
+            return [
                 {
-                    "Name": parameter["Name"],
-                    "Value": parameter["Value"],
-                    "DataType": parameter["DataType"],
+                    "Name": response["Parameter"]["Name"],
+                    "Value": response["Parameter"]["Value"],
+                    "DataType": response["Parameter"]["Type"],
                 }
-                for parameter in page["Parameters"]
             ]
-            parameters.extend(params)
-    except Exception as e:
-        logger.error(f"[{region}] Error getting parameters from path: {path}")
-        logger.error(e)
+        except Exception as e:
+            logger.error(f"[{region}] Error getting parameter by name: {path}")
+            logger.error(e)
     return parameters
 
 
-def process_region_parameters(regions, path, recursive, output_format):
+def process_regions(regions, path, recursive, output_format):
     logger.debug(f"Regions: {regions}")
-    all_region_param_list = AllRegionParameters()
+    region_params = AllRegionParameters()
     for region in regions:
         logger.info(f"Getting parameters for region: {region}")
         parameters = get_parameters(path, region=region, Recursive=recursive)
         logger.debug(json.dumps(parameters, indent=4, sort_keys=True))
         region_parameters = RegionParameters(region, parameters)
 
-        all_region_param_list.add_region_parameters(region_parameters)
+        region_params.add_region_parameters(region_parameters)
 
     if output_format == "table":
         table = Table(["region", "name", "datatype", "value"])
 
-        for region in all_region_param_list.parameters_by_region:
+        for region in region_params.parameters_by_region:
             [
                 table.add_row([region, p["Name"], p["DataType"], p["Value"]])
-                for p in all_region_param_list.parameters_by_region[region][
-                    "Parameters"
-                ]
+                for p in region_params.parameters_by_region[region]["Parameters"]
             ]
 
         table.print(tablefmt="fancy_grid")
 
     if output_format == "json":
         # print("[-] Parameters")
-        logger.debug(all_region_param_list)
+        logger.debug(region_params)
         print(
             json.dumps(
-                dict(all_region_param_list.parameters_by_region),
+                dict(region_params.parameters_by_region),
                 indent=2,
                 cls=MyEncoder,
             )
@@ -221,7 +244,7 @@ def cli(region, all_regions, output_format, path, recursive, verbose):
         sys.exit(1)
 
     regions = get_regions() if all_regions else [region]
-    process_region_parameters(regions, path, recursive, output_format)
+    process_regions(regions, path, recursive, output_format)
 
 
 if __name__ == "__main__":
