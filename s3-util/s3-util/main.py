@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import boto3
-import botocore
+import botocore.exceptions
 import click
 
 # sts = boto3.client('sts')
 # print(sts.get_caller_identity())
 
-s3 = boto3.resource("s3")
+client = boto3.resource("s3")
 
 
 @click.group()
@@ -49,14 +49,16 @@ def empty_bucket(ctx, delete):
     for idx, bucket_name in enumerate(buckets, 1):
         print(f"[-] Emptying bucket '{bucket_name}' ...")
         try:
-            bucket = s3.Bucket(bucket_name)
+            bucket = client.Bucket(bucket_name)
             bucket.object_versions.delete()
             print(f"[✔] Emptied '{bucket_name}'")
             if delete:
-                result = ctx.invoke(delete_bucket)
+                ctx.invoke(delete_bucket)
                 # print(f"{result=}")
-        except Exception as e:
+        # except Exception as e:
+        except botocore.exceptions.ClientError as e:
             print(f"[!] An error occurred while emptying '{bucket_name}'\n{e}")
+            # print(f"{e.response['Error']['Code']}")
 
 
 @cli.command("delete")
@@ -70,7 +72,7 @@ def delete_bucket(ctx):
     # print(f"{buckets=}")
     try:
         for bucket_name in buckets:
-            bucket = s3.Bucket(bucket_name)
+            bucket = client.Bucket(bucket_name)
             bucket.delete()
             print(f"[✔] Bucket '{bucket_name}' deleted")
     except Exception as e:

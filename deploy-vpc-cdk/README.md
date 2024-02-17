@@ -34,6 +34,10 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
+```bash
+./cdk-deploy-to.sh 872771682304 us-east-1 -c config=isengard-sandbox
+```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
