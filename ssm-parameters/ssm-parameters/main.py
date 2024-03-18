@@ -102,7 +102,7 @@ def get_regions(sort=True):
     :param sort: sort the list of regions
     """
     parameters = get_parameters(
-        path="/aws/service/global-infrastructure/services/ssm/regions",
+        path="/aws/service/global-infrastructure/services/ssm/regions/",
     )
     if sort:
         return [
