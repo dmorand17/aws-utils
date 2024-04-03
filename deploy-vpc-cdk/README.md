@@ -38,6 +38,11 @@ python -m pip install -r requirements.txt
 ./cdk-deploy-to.sh 872771682304 us-east-1 -c config=isengard-sandbox
 ```
 
+```bash
+cdk deploy --context network=sandbox
+cdk destroy --context network=sandbox
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```
