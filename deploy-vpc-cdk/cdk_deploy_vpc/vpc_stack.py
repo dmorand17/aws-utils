@@ -20,6 +20,7 @@ class VpcStack(Stack):
             self,
             vpc_name,
             ip_addresses=ec2.IpAddresses.cidr(vpc_cidr),
+            create_internet_gateway=True,
             max_azs=2,
             nat_gateways=1,
             subnet_configuration=[
@@ -41,6 +42,30 @@ class VpcStack(Stack):
                 ),
             },
         )
+
+        if (
+            config.get("ssm_endpoints") is not None
+            and config.get("ssm_endpoints") is True
+        ):
+            # Add security grop
+            sg = ec2.SecurityGroup(
+                self,
+                "ssm-endpoint-sg",
+                vpc=vpc,
+                allow_all_outbound=True,
+            )
+
+            # Add ssm endpoints to vpc
+            vpc.add_interface_endpoint(
+                "ssm-messages",
+                service=ec2.InterfaceVpcEndpointAwsService.SSM_MESSAGES,
+                security_groups=[sg],
+            )
+            vpc.add_interface_endpoint(
+                "ssm",
+                service=ec2.InterfaceVpcEndpointAwsService.SSM,
+                security_groups=[sg],
+            )
 
         # Output vpc details
         # print the IAM role arn for this service account
