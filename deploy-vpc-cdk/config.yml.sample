@@ -1,0 +1,8 @@
+networks:
+  network1:
+    name: sandbox
+    account: 123456789
+    vpc_cidr: 10.100.0.0/16
+    ssm_endpoints: True          # TODO Change this to a list of vpc endpoints to enable
+    
+tags: [] 
