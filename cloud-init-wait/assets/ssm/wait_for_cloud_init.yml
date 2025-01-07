@@ -1,0 +1,41 @@
+---
+schemaVersion: "2.2"
+description: "Document to delay patching until cloud-init completes"
+mainSteps:
+- action: "aws:runShellScript"
+  name: "WaitForCloudInit"
+  inputs:
+    runCommand:
+    - |
+      touch /root/patch-pending
+      rm -f /root/patch-continue
+      rm -f /root/patch-ready
+      rm -f /root/patch-done
+      
+      count=0
+      max_count=300
+      
+      echo "Waiting 1 minute to allow cloud-init to start."
+      sleep 60
+      
+      while ps -efww | grep cloud-init | grep -v 'grep cloud-init'; do
+          if [[ $count > $max_count ]]; then
+              echo "Have waited max time of $max_count minutes so allowing patch to continue."
+              exit 0
+          fi
+          echo "cloud-init running. Waiting 60s for it to finish."
+          sleep 60
+      done
+      echo "cloud-init not running. Patching can proceed."
+      rm -f /root/patch-pending
+      touch /root/patch-ready
+
+      # This check is done after cloud-init so that it can create the file.
+      while [ -e /root/patch-hold ]; do
+          if [[ $count > $max_count ]]; then
+              echo "Have waited max time of $max_count minutes so allowing patch to continue."
+              exit 0
+          fi
+          echo "Waiting 60s for /root/patch-hold to be removed."
+          sleep 60
+      done
