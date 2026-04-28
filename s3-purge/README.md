@@ -6,6 +6,7 @@ Empties all object versions from one or more S3 buckets and optionally deletes t
 
 - AWS Account credentials
 - Python 3
+- [`uv`](https://docs.astral.sh/uv/)
 
 ## Getting Started
 
@@ -54,10 +55,4 @@ aws s3 ls | grep "open" | cut -d' ' -f3 | xargs -I{} s3-purge -b {} empty --dele
 
 ## Build
 
-```bash
-# Create virtual environment
-uv venv
-
-# Install requirements
-uv pip install -r requirements.txt
-```
+Dependencies are managed via `pyproject.toml`. `uv run` handles the virtual environment automatically on first use.
